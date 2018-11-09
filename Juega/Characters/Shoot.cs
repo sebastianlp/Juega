@@ -10,11 +10,11 @@ namespace Juega.Characters
         public Vector2 Velocity;
         public float MoveSpeed;
 
-        public Shoot()
+        public Shoot(string imagePath, int moveSpeed)
         {
             Image = new Image();
-            Image.Path = "Characters/Arrow";
-            MoveSpeed = 100;
+            Image.Path = imagePath;
+            MoveSpeed = moveSpeed;
         }
 
         public void LoadContent(Vector2 shootStartPosition)
@@ -28,11 +28,14 @@ namespace Juega.Characters
             Image.UnloadContent();
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, string direction = "down")
         {
             Image.IsActive = true;
 
-            Velocity.Y = -MoveSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (direction == "down")
+                Velocity.Y = -MoveSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            else
+                Velocity.Y = MoveSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             Image.Update(gameTime);
 

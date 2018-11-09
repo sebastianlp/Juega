@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Juega.Graphics;
+using System.Collections.Generic;
 
 namespace Juega.Characters
 {
@@ -12,6 +13,8 @@ namespace Juega.Characters
         public int AttackPower = 10;
         public bool Strike = false;
         public int Life = 50;
+        public List<Shoot> Shoots = new List<Shoot>();
+        float elapsedTimeSinceLastShoot = 0;
 
         public Skeleton()
         {
@@ -32,6 +35,9 @@ namespace Juega.Characters
         public void UnloadContent()
         {
             Image.UnloadContent();
+
+            foreach (Shoot shoot in Shoots)
+                shoot.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -42,6 +48,21 @@ namespace Juega.Characters
 
             Velocity.Y = MoveSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            elapsedTimeSinceLastShoot += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Cada un segundo disparamos
+            if (elapsedTimeSinceLastShoot > 1)
+            {
+                Shoot shoot = new Shoot("Characters/Fireball", 120);
+                Vector2 shootStartPosition = new Vector2(Image.Position.X + (Image.SpriteSheetEffect.FrameWidth / 4), Image.Position.Y + 20);
+                shoot.LoadContent(shootStartPosition);
+                Shoots.Add(shoot);
+                elapsedTimeSinceLastShoot -= 1;
+            }
+
+            foreach (Shoot shoot in Shoots)
+                shoot.Update(gameTime, "up");
+
             Image.Update(gameTime);
 
             Image.Position = Image.Position += Velocity;
@@ -50,6 +71,9 @@ namespace Juega.Characters
         public void Draw(SpriteBatch spriteBatch)
         {
             Image.Draw(spriteBatch);
+
+            foreach (Shoot shoot in Shoots)
+                shoot.Draw(spriteBatch);
         }
     }
 }

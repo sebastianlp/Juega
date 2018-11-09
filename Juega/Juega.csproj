@@ -45,6 +45,7 @@
     <Compile Include="Characters\Shoot.cs" />
     <Compile Include="Characters\Skeleton.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Graphics\Background.cs" />
     <Compile Include="Graphics\FadeEffect.cs" />
     <Compile Include="Graphics\Image.cs" />
     <Compile Include="Graphics\ImageEffect.cs" />
@@ -69,9 +70,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Characters\Arrow.png" />
+    <Content Include="Content\Characters\Fireball.png" />
     <Content Include="Content\FadeEffect\Image.png" />
     <Content Include="Content\Characters\Player.png" />
     <Content Include="Content\Characters\Skeleton.png" />
+    <Content Include="Content\Maps\Background.png" />
     <Content Include="Content\Screens\PauseScreen.png" />
     <Content Include="Content\Screens\PresentationScreen.png" />
     <Content Include="Icon.ico" />

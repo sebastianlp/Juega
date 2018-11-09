@@ -8,14 +8,13 @@ using Juega.Graphics;
 using Juega.Meta;
 using Microsoft.Xna.Framework.Input;
 
-
-
 namespace Juega.Screens
 {
     public class GamePlayScreen : GameScreen
     {
         Life life;
         Player player;
+        Background background;
         List<Skeleton> enemies = new List<Skeleton>();
         Random random = new Random();
         float elapsedTimeSinceLastEnemyCreation = 0;
@@ -24,11 +23,13 @@ namespace Juega.Screens
         {
             player = new Player();
             life = new Life();
+            background = new Background();
         }
 
         public override void LoadContent()
         {
             base.LoadContent();
+            background.LoadContent();
             player.LoadContent();
             life.LoadContent();
 
@@ -38,6 +39,7 @@ namespace Juega.Screens
         public override void UnloadContent()
         {
             base.UnloadContent();
+            background.UnloadContent();
             player.UnloadContent();
             life.UnloadContent();
 
@@ -50,6 +52,7 @@ namespace Juega.Screens
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            background.Update(gameTime);
             player.Update(gameTime);
 
             if (InputManager.Instance.KeyPressed(Keys.P))
@@ -124,6 +127,7 @@ namespace Juega.Screens
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+            background.Draw(spriteBatch);
             player.Draw(spriteBatch);
             life.Draw(spriteBatch);
 

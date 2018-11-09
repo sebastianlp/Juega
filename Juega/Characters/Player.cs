@@ -68,7 +68,7 @@ namespace Juega.Characters
 
             if (InputManager.Instance.KeyPressed(Keys.Space))
             {
-                Shoot shoot = new Shoot();
+                Shoot shoot = new Shoot("Characters/Arrow", 200);
                 shoot.LoadContent(shootStartPosition);
                 Shoots.Add(shoot);
             }
@@ -83,7 +83,6 @@ namespace Juega.Characters
 
             foreach (Shoot shoot in Shoots)
                 shoot.Update(gameTime);
-                
 
             Image.Update(gameTime);
             shootStartPosition = new Vector2(newPosition.X + (Image.SpriteSheetEffect.FrameWidth / 4), newPosition.Y - 20);
