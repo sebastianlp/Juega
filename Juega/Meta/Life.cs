@@ -6,16 +6,16 @@ namespace Juega.Meta
 {
     public class Life
     {
-        int life = 100;
+        public float PlayerLife = 100;
         Image Image;
         public bool Hitted = false;
-        public int Modifier = 1;
+        public float Modifier = 1.0f;
 
         public Life()
         {
             Image = new Image();
             Image.FontName = "Fonts/Score";
-            Image.Text = "Vida: " + life.ToString();
+            Image.Text = "Vida: " + ((int)PlayerLife).ToString();
             Image.Color = Color.Green;
         }
 
@@ -38,19 +38,18 @@ namespace Juega.Meta
 
             if (Hitted)
             {
-                life -= 10 * Modifier;
-                Image.Text = "Vida: " + life.ToString();
+                PlayerLife -= 10.0f * Modifier;
+                Image.Text = "Vida: " + ((int)PlayerLife).ToString();
                 Hitted = false;
                 Modifier = 1;
             }
 
-            if (life < 60) Image.Color = Color.Yellow;
-            if (life < 30) Image.Color = Color.Red;
+            if (PlayerLife < 60) Image.Color = Color.Yellow;
+            if (PlayerLife < 30) Image.Color = Color.Red;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Image.IsActive = true;
             Image.Draw(spriteBatch, "Text");
         }
     }

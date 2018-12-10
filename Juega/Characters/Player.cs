@@ -10,6 +10,7 @@ namespace Juega.Characters
     public class Player
     {
         public Image Image;
+        public Image Blood;
         public Vector2 Velocity;
         public float MoveSpeed;
         public List<Shoot> Shoots = new List<Shoot>();
@@ -18,15 +19,18 @@ namespace Juega.Characters
         public Player()
         {
             Image = new Image();
+            Blood = new Image();
             Velocity = Vector2.Zero;
             Image.Path = "Characters/Player";
             Image.Effects = "SpriteSheetEffect";
+            Blood.Path = "Characters/Blood";
             MoveSpeed = 100;
         }
 
         public void LoadContent()
         {
             Image.LoadContent();
+            Blood.LoadContent();
             Image.Position.X = (ScreenManager.Instance.ViewportWidth - Image.SpriteSheetEffect.FrameWidth) / 2;
             Image.Position.Y = ScreenManager.Instance.ViewportHeight - 64;
             Image.SpriteSheetEffect.CurrentFrame.Y = 8;
@@ -37,7 +41,8 @@ namespace Juega.Characters
         public void UnloadContent()
         {
             Image.UnloadContent();
-            
+            Blood.UnloadContent();
+
             foreach(Shoot shoot in Shoots)
                 shoot.UnloadContent();
         }
@@ -85,13 +90,21 @@ namespace Juega.Characters
                 shoot.Update(gameTime);
 
             Image.Update(gameTime);
+            Blood.Update(gameTime);
             shootStartPosition = new Vector2(newPosition.X + (Image.SpriteSheetEffect.FrameWidth / 4), newPosition.Y - 20);
             Image.Position = newPosition;
+            Blood.Position = newPosition;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             Image.Draw(spriteBatch);
+
+            if (Blood.IsActive)
+            {
+                Blood.Draw(spriteBatch);
+                Blood.IsActive = false;
+            }
             
             foreach(Shoot shoot in Shoots)
                 shoot.Draw(spriteBatch);

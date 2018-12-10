@@ -46,7 +46,6 @@ namespace Juega
             ScreenManager.Instance.GraphicsDevice = GraphicsDevice;
             ScreenManager.Instance.SpriteBatch = spriteBatch;
             ScreenManager.Instance.LoadContent(Content);
-
         }
 
         /// <summary>

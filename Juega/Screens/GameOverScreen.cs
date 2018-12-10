@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Juega.Screens
 {
-    public class PresentationScreen : GameScreen
+    public class GameOverScreen : GameScreen
     {
         public Image Image;
 
-        public PresentationScreen()
+        public GameOverScreen()
         {
             Image = new Image();
-            Image.Path = "Screens/PresentationScreen";
+            Image.Path = "Screens/GameOverScreen";
             Image.IsActive = true;
             Image.Alpha = 0.5f;
         }
@@ -22,7 +22,6 @@ namespace Juega.Screens
         {
             base.LoadContent();
             Image.LoadContent();
-            Image.FadeEffect.FadeSpeed = 0.7f;
         }
 
         public override void UnloadContent()
@@ -36,7 +35,7 @@ namespace Juega.Screens
             base.Update(gameTime);
             Image.Update(gameTime);
 
-            if (InputManager.Instance.KeyPressed(Keys.Enter, Keys.Space))
+            if (InputManager.Instance.KeyPressed(Keys.R))
                 ScreenManager.Instance.ChangeScreens("GamePlayScreen");
         }
 

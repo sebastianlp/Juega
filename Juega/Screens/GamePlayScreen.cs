@@ -13,6 +13,7 @@ namespace Juega.Screens
     public class GamePlayScreen : GameScreen
     {
         Life life;
+        Score score;
         Player player;
         Background background;
         List<Skeleton> enemies = new List<Skeleton>();
@@ -23,6 +24,7 @@ namespace Juega.Screens
         {
             player = new Player();
             life = new Life();
+            score = new Score();
             background = new Background();
         }
 
@@ -32,6 +34,7 @@ namespace Juega.Screens
             background.LoadContent();
             player.LoadContent();
             life.LoadContent();
+            score.LoadContent();
 
             CreateEnemies();
         }
@@ -42,6 +45,7 @@ namespace Juega.Screens
             background.UnloadContent();
             player.UnloadContent();
             life.UnloadContent();
+            score.UnloadContent();
 
             foreach (Skeleton enemy in enemies)
             {
@@ -52,8 +56,10 @@ namespace Juega.Screens
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
             background.Update(gameTime);
-            player.Update(gameTime);
+
+            player.Blood.IsActive = false;
 
             if (InputManager.Instance.KeyPressed(Keys.P))
                 ScreenManager.Instance.PauseScreen();
@@ -61,59 +67,69 @@ namespace Juega.Screens
             elapsedTimeSinceLastEnemyCreation += (float)gameTime.ElapsedGameTime.TotalSeconds;
             List<int> indexesToRemove = indexesToRemove = new List<int>();
 
-            if (enemies.Count > 0)
+            // Borro los que fueron lastimados o salieron de pantalla
+            for (int i = enemies.Count - 1; i >= 0; i--)
             {
-                indexesToRemove = new List<int>();
-                // Blucle por los enemigos de atras para adelante asi si ya salio de la pantalla o lo toco un disparo lo elimino
-                for (int i = enemies.Count - 1; i >= 0; i--)
+                if (i < enemies.Count)
                 {
-                    enemies[i].Update(gameTime);
-
-                    // Si choca con el player y no ataco. Seteo el atributo que va a bajar la vida en true y el atributo que el enemigo ataco en true asi prevengo otro ataque del mismo enemigo
-                    if (enemies[i].Image.Rectangle.Intersects(player.Image.Rectangle) && !enemies[i].Strike)
+                    if (enemies[i].Hitted || enemies[i].OutOfBounds)
                     {
-                        life.Hitted = true;
-                        enemies[i].Strike = true;
-                    }
-
-                    if (player.Shoots.Count > 0)
-                    {
-                        List<int> shootIndexesToRemove = new List<int>();
-                        for (int s = player.Shoots.Count - 1; s >= 0; s--)
-                            if (enemies[i].Image.Rectangle.Intersects(player.Shoots[s].Image.Rectangle))
-                            {
-                                indexesToRemove.Add(i);
-                                shootIndexesToRemove.Add(s); // Agrego el tiro para quitar
-                            }
-
-                        // Quito los tiros que interceptaron enemigos
-                        foreach (int s in shootIndexesToRemove)
-                        {
-                            player.Shoots[s].UnloadContent();
-                            player.Shoots.RemoveAt(s);
-                        }
-                    }
-
-                    // Si llega abajo de todo y no lo agregue cuando dispare lo guardo. Ademas le saco el doble de vida al player.
-                    if (enemies[i].Image.Position.Y > ScreenManager.Instance.ViewportHeight && !indexesToRemove.Contains(i))
-                    {
-                        indexesToRemove.Add(i);
-                        life.Hitted = true;
-                        life.Modifier = 2;
+                        enemies[i].UnloadContent();
+                        enemies.RemoveAt(i);
                     }
                 }
             }
 
-            // Quito los enemigos que llegaron al final o fueron interceptados por un tiro
-            foreach (int i in indexesToRemove)
+            if (enemies.Count > 0)
             {
-                enemies[i].UnloadContent();
-                enemies.RemoveAt(i);
+                foreach (Skeleton enemy in enemies)
+                {
+                    enemy.Update(gameTime);
+
+                    // Si choca con el player y no ataco. Seteo el atributo que va a bajar la vida en true y el atributo que el enemigo ataco en true asi prevengo otro ataque del mismo enemigo
+                    if (enemy.Image.Rectangle.Intersects(player.Image.Rectangle) && !enemy.Strike)
+                    {
+                        life.Hitted = true;
+                        enemy.Strike = true;
+                    }
+
+                    // Chequeo los disparos del enemigo
+                    foreach(Shoot eS in enemy.Shoots)
+                    {
+                        if (player.Image.Rectangle.Intersects(eS.Image.Rectangle) && !eS.Impacted)
+                        {
+                            player.Blood.IsActive = true;
+                            life.Hitted = true;
+                            life.Modifier = 0.10f;
+                            eS.Impacted = true;
+                        }
+                    }
+
+                    // Chequeo los disparos del player
+                    foreach(Shoot pS in player.Shoots)
+                    {
+                        if (enemy.Image.Rectangle.Intersects(pS.Image.Rectangle) && !pS.Impacted)
+                        {
+                            score.EnemyHitted = true;
+                            enemy.Hitted = true;
+                            pS.Impacted = true;
+                        }
+                    }
+
+                    // Si llega abajo de todo y no lo agregue cuando dispare lo guardo. Ademas le saco el doble de vida al player.
+                    if (enemy.Image.Position.Y > ScreenManager.Instance.ViewportHeight && !enemy.Strike && !enemy.Hitted)
+                    {
+                        life.Hitted = true;
+                        life.Modifier = 0.1f; // le quito 1 de vida por cada enemigo que se pasa de la linea
+                        enemy.OutOfBounds = true;
+                        enemy.Strike = true;
+                    }
+                }
             }
 
-            if (enemies.Count < 15 && elapsedTimeSinceLastEnemyCreation > 1)// Si hay menos de 15 enemigos y hace mas de 1 segundo cree el anterior, voy de nuevo.
+            if (enemies.Count < 30 && elapsedTimeSinceLastEnemyCreation > 1)// Si hay menos de 15 enemigos y hace mas de 1 segundo cree el anterior, voy de nuevo.
             {
-                CreateEnemies();
+                 CreateEnemies();
                 // Actualizo el ultimo que cree
                 // Ojo, que si se envia la cantidad por parametro, se debe actualizar esa misma cantidad a partir del ultimo en la lista 
                 // (esto es porque ya actualice todos los que tenia mas arriba, pero si inserto uno nuevo sin actualizarlo se ve TODO el sprite de skeletos y no queremos eso)
@@ -121,7 +137,12 @@ namespace Juega.Screens
                 elapsedTimeSinceLastEnemyCreation -= 1;
             }
 
+            player.Update(gameTime);
             life.Update(gameTime);
+            score.Update(gameTime);
+
+            if (life.PlayerLife <= 0)
+                ScreenManager.Instance.ChangeScreens("GameOverScreen");
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -130,6 +151,7 @@ namespace Juega.Screens
             background.Draw(spriteBatch);
             player.Draw(spriteBatch);
             life.Draw(spriteBatch);
+            score.Draw(spriteBatch);
 
             foreach (Skeleton enemy in enemies)
             {

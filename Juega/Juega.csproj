@@ -56,6 +56,7 @@
     <Compile Include="Meta\Score.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Screens\GameOverScreen.cs" />
     <Compile Include="Screens\GamePlayScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\PauseScreen.cs" />
@@ -69,12 +70,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Audio\GameSong.mp3" />
     <Content Include="Content\Characters\Arrow.png" />
+    <Content Include="Content\Characters\Blood.png" />
     <Content Include="Content\Characters\Fireball.png" />
+    <Content Include="Content\Characters\Explosion.png" />
     <Content Include="Content\FadeEffect\Image.png" />
     <Content Include="Content\Characters\Player.png" />
     <Content Include="Content\Characters\Skeleton.png" />
     <Content Include="Content\Maps\Background.png" />
+    <Content Include="Content\Screens\GameOverScreen.png" />
     <Content Include="Content\Screens\PauseScreen.png" />
     <Content Include="Content\Screens\PresentationScreen.png" />
     <Content Include="Icon.ico" />

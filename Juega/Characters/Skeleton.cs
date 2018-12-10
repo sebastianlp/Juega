@@ -14,7 +14,10 @@ namespace Juega.Characters
         public bool Strike = false;
         public int Life = 50;
         public List<Shoot> Shoots = new List<Shoot>();
+        public bool Hitted = false;
+        public bool OutOfBounds = false;
         float elapsedTimeSinceLastShoot = 0;
+        
 
         public Skeleton()
         {

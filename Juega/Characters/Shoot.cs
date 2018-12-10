@@ -9,6 +9,7 @@ namespace Juega.Characters
         public Image Image;
         public Vector2 Velocity;
         public float MoveSpeed;
+        public bool Impacted = false;
 
         public Shoot(string imagePath, int moveSpeed)
         {

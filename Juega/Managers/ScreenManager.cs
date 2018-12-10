@@ -3,12 +3,14 @@ using Juega.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 
 namespace Juega.Managers
 {
     public class ScreenManager
     {
+        Song gameSong;
         private static ScreenManager instance;
         public Vector2 Dimensions { private set; get; }
         public ContentManager ContentManager { private set; get; }
@@ -60,6 +62,8 @@ namespace Juega.Managers
         {
             ContentManager = new ContentManager(contentManager.ServiceProvider, "Content");
             currentScreen.LoadContent();
+            gameSong = ContentManager.Load<Song>("Audio/GameSong");
+            MediaPlayer.Play(gameSong);
             Image.LoadContent();
         }
 
@@ -90,7 +94,7 @@ namespace Juega.Managers
             previousScreen = currentScreen;
             newScreen = (GameScreen)Activator.CreateInstance(Type.GetType("Juega.Screens." + screenName));
             Image.IsActive = true;
-            Image.Alpha = 0.0f;
+            Image.Alpha = 1.0f;
             Image.FadeEffect.Increase = true;
             IsTransitioning = true;
         }
